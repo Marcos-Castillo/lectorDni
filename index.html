@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta Empleados</title>
+</head>
+<body>
+    <h1>Búsqueda por DNI</h1>
+    <input type="text" id="dniInput" placeholder="Ingresa DNI">
+    
+    <button id="searchButton">Buscar</button>
+    <div id="result"></div>
+    <br><br><br><br><br>
+<hr>
+    <label for="csvInput">Archivo Empleados</label>
+    <input type="file" id="csvInput" accept=".csv">
+    
+
+    <script>
+        let data = [];
+
+        // cargar el CSV
+        document.getElementById('csvInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    data = csvToArray(text);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // convertir CSV a array
+        function csvToArray(strData) {
+            const rows = strData.split('\n');
+            return rows.map(row => row.split(';').map(cell => cell.trim()));
+        }
+
+
+
+        // Buscar DNI
+        document.getElementById('searchButton').onclick = function() {
+            const dni = document.getElementById('dniInput').value.trim().length>8? document.getElementById('dniInput').value.trim().substring(39, 47):document.getElementById('dniInput').value.trim();
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; 
+
+  console.log(dni)
+            if (dni) {
+                const found = data.find(row => row[0] === dni); //DNI en primera columna
+
+                if (found) {
+                    resultDiv.innerHTML = `DNI encontrado: ${found.join(', ')}`;
+                } else {
+                    resultDiv.innerHTML = 'DNI no encontrado';
+                }
+            } else {
+                resultDiv.innerHTML = 'Por favor, ingresa un DNI';
+            }
+        };
+    </script>
+</body>
+</html>
